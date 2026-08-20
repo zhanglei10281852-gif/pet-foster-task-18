@@ -54,17 +54,6 @@ type Room struct {
 	UpdatedAt        time.Time `json:"updateTime"`
 }
 
-func (r Room) StatusAfterOrder(orderStatus string) string {
-	switch orderStatus {
-	case "COMPLETED", "CANCELLED":
-		return "CLEANING"
-	case "IN_PROGRESS":
-		return "OCCUPIED"
-	default:
-		return "RESERVED"
-	}
-}
-
 type ServiceItem struct {
 	ID          int64     `json:"serviceId"`
 	Name        string    `json:"serviceName"`

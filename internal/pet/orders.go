@@ -143,16 +143,6 @@ func (s *Service) UpdateOrderStatus(ctx context.Context, principal Principal, id
 	if err := requireAffected(result, ErrConflict); err != nil {
 		return err
 	}
-	var roomID int64
-	if err := tx.QueryRowContext(ctx, `SELECT COALESCE(room_id,0) FROM foster_orders WHERE order_id=?`, id).Scan(&roomID); err != nil {
-		return err
-	}
-	room := Room{}
-	if roomID != 0 {
-		if _, err := tx.ExecContext(ctx, `UPDATE rooms SET status=?,update_time=? WHERE room_id=?`, room.StatusAfterOrder(next), now, roomID); err != nil {
-			return err
-		}
-	}
 	if _, err := tx.ExecContext(ctx, `INSERT INTO operation_logs(user_id,username,operation,method,result,create_time) VALUES(?,?,?,?,1,?)`, principal.UserID, principal.Username, "ORDER_STATUS_"+next, "PUT /api/order/status", now); err != nil {
 		return err
 	}
